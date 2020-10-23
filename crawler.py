@@ -43,7 +43,9 @@ def login(url, pwd, userName, session):
 
 
 def composeCmnt(session, response):
-    cmntForm = {'ck': '', 'rv_comment': response['ans'],
+    #cmntForm = {'ck': '', 'rv_comment': response['ans'],
+    #            'start': 0, 'submit_btn': '发送'}
+    cmntForm = {'ck': '', 'rv_comment': response,
                 'start': 0, 'submit_btn': '发送'}
     cmntForm['ck'] = DouUtil.getCkFromCookies(session)
     return cmntForm
@@ -61,13 +63,19 @@ def prepareCaptcha(data, session, postUrl, r=None) -> dict:
 def postCmnt(session, postUrl, request, response):
     data = composeCmnt(session._session, response)
     cmntUrl = postUrl + 'add_comment'
-    r = session.post(cmntUrl, data=data, headers={'Referer': postUrl}, files=response.get('files'))
+    r = session.post(cmntUrl, data=data, headers={'Referer': postUrl})#, files=response.get('files'))
     # r = session.get(postUrl)
     code = str(r.status_code)
+
+    dontknow = etree.HTML(r.text)
+
     if (code.startswith('4') or code.startswith('5')) and not code.startswith('404'):
         log.error(r.status_code)
         raise Exception
-    elif 0 != len(etree.HTML(r.text).xpath("")):
+    else:
+        log.info("Success.", request + '  --' + data['rv_comment'])
+    '''
+    elif len(etree.HTML(r.text).xpath("")) != 0:
         log.warning(r.status_code)
         data = prepareCaptcha(data, session, postUrl, r)
         r = session.post(cmntUrl, data=data)
@@ -94,15 +102,14 @@ def postCmnt(session, postUrl, request, response):
                 raise Exception
 
         log.info("Success.", request + '  --' + data['rv_comment'])
-    else:
-        log.info("Success.", request + '  --' + data['rv_comment'])
+        '''
 
 
 def main():
-    respGen = RespGen.RespGen()
+    respGen = RespGen.RespGen() #生成回答准备 需要word
     q = SimpleQueue()
     cred = DouUtil.getCred()
-    pwd = cred['pwd']
+    pwd = cred['pwd']#账号密码 需要txt
     userName = cred['userName']
     loginReqUrl = ''
 
@@ -116,14 +123,14 @@ def main():
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.5',
     })
-    s.cookies.update(DouUtil.loadCookies())
+    s.cookies.update(DouUtil.loadCookies())#cookies登录 需要txt
 
-    slctr = NewPostSelector.NewPostSelector(q, reqWrapper)
+    slctr = NewPostSelector.NewPostSelector(q, reqWrapper)#选择需要评论的帖子
     timeToSleep = 5
     combo = 0
 
     while True:
-        q = slctr.select()
+        q = slctr.select()  #评论数小于20
         if q.qsize() == 0:
             log.debug("sleep fro emty queue: ", timeToSleep)
             time.sleep(timeToSleep)
@@ -139,14 +146,14 @@ def main():
                 question, postUrl, dajie = tup[0], tup[1], tup[2]
 
                 resp = respGen.getResp(question, dajie)
-                postCmnt(reqWrapper, postUrl, question, resp)
+                postCmnt(reqWrapper, postUrl, question, resp)   #评论
 
                 sleepCmnt = random.randint(20, 30)
                 log.debug("sleep cmnt: ", sleepCmnt)
 
 
                 recorder.write(postUrl.split('/')[5] + '\n')
-                record = question + ': ' + resp['ans'] + '\n'
+                record = question + ': ' + resp + '\n'
                 file.write(record)
 
         except Empty:
