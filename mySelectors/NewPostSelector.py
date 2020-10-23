@@ -13,7 +13,7 @@ class NewPostSelector:
         self.loadHistoFromFile()
 
     def select(self):
-        groupUrl = 'https://www.douban.com/group/groupID/'
+        groupUrl = 'https://www.douban.com/group/704352/'
         time.sleep(5)
         items = self.getItems(groupUrl)
         self.putItems(items)
@@ -34,11 +34,14 @@ class NewPostSelector:
 
             cnt = tup[2]
             try:
-                href = tup[1].split('/')[5]
-                if cnt > 20 or href in self.histo:
+                if tup[1]:
+                    href = tup[1].split('/')[5]
+                    if cnt > 2 or href in self.histo:
+                        continue
+                else:
                     continue
                 length += 1
-                if length > 12:
+                if length > 5:
                     return
                 self.histo.add(href)
                 # file.write(href+'\n')
@@ -56,7 +59,7 @@ class NewPostSelector:
                     continue
                 self.histo.add(l)
 
-    def loadHistoFromWeb(self, url='https://www.douban.com/group/groupID/'):
+    def loadHistoFromWeb(self, url='https://www.douban.com/group/704352/'):
         newSet = set()
         time.sleep(5)
         r = self.s.get(url)
@@ -77,7 +80,8 @@ class NewPostSelector:
 
     def parseHtml(self, html, xpExp="defaultExp"):
         eles = etree.HTML(html.text).xpath(xpExp)
-        eles = eles[len(eles) - 50:]
+        #eles = eles[len(eles) - 50:]
+        eles = eles[4:]
         items = []
         for ele in eles:
             li = ele.getchildren()
