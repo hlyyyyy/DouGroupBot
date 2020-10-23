@@ -3,6 +3,7 @@ import random
 
 class RespGen:
     def __init__(self):
+        '''
         self.bot = None
         self.map = {}
         # load responses
@@ -23,6 +24,7 @@ class RespGen:
                     i += 1
 
         self.li = []
+
         with open('', "r", encoding='utf-8') as file:
             lines = file.readlines()
             for l in lines:
@@ -32,8 +34,18 @@ class RespGen:
                 self.li.append(l)
 
         self.possibles = self.map.keys()
+        '''
+        # load responses
+        res = []
+        with open('words.txt', "r", encoding='utf-8') as file:
+            lines = file.readlines()
+            for line in lines:
+                ans = line.strip()
+                res.append(ans)
+        self.res = res
 
     def getResp(self, ques: str, userID: str):
+        '''
         rsp = self.bot.getAnws(ques, userID)
         if len(rsp) > 0:
             return rsp
@@ -50,6 +62,10 @@ class RespGen:
 
         chosen = random.randint(0, len(self.li) - 1)
         return self.li[chosen]
+        '''
+        r = random.randint(0,5)
+        res = self.res[r]
+        return  res
 
 
 if __name__ == '__main__':
