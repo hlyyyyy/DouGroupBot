@@ -132,7 +132,7 @@ def main():
     while True:
         q = slctr.select()  #评论数小于20
         if q.qsize() == 0:
-            log.debug("sleep fro emty queue: ", timeToSleep)
+            log.debug("sleep for empty queue: ", timeToSleep)
             time.sleep(timeToSleep)
         else:
             timeToSleep = 5
