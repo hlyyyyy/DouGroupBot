@@ -43,3 +43,9 @@
 - [ ] 完全的生产者-消费者模式
 - [x] 接入自然语言处理接口
 - [x] 接入OCR接口
+
+## 大虞海棠专组tips
+
+1. 先在resources/文件夹下创建histo.txt、record.txt两个空文件
+2. 在网页上登录豆瓣账号，F12获取cookies中所需元素（具体见resources/cookies.txt），并将其填入resources/cookies.txt
+3. mySelectors/NewPostSelector.py中39行 if cnt > ? 可以更改筛选条件
