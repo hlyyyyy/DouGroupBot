@@ -46,6 +46,18 @@
 
 ## 大虞海棠专组tips
 
+### 运行指南
 1. 先在resources/文件夹下创建histo.txt、record.txt两个空文件
 2. 在网页上登录豆瓣账号，F12获取cookies中所需元素（具体见resources/cookies.txt），并将其填入resources/cookies.txt
 3. mySelectors/NewPostSelector.py中39行 if cnt > ? 可以更改筛选条件
+
+### 部署指南
+```
+# 避免解析cookies文件时，文本内容包括\n
+echo -n "bid=""; ck=; dbcl2=""" >> resources/cookies.txt
+
+# 启动后台程序
+nohup python3 crawler.py > output.log &
+# 结束后台程序
+pkill -f crawler.py
+```
