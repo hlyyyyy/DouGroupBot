@@ -63,7 +63,7 @@ class RespGen:
         chosen = random.randint(0, len(self.li) - 1)
         return self.li[chosen]
         '''
-        r = random.randint(0,30)
+        r = random.randint(0,len(self.res) - 1)
         res = self.res[r] + '（书虞测试中，可能会抽风，请见谅）'
         return res
 

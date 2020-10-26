@@ -14,7 +14,7 @@ class NewPostSelector:
 
     def select(self):
         groupUrl = 'https://www.douban.com/group/704352/'
-        time.sleep(5)
+        time.sleep(20)
         items = self.getItems(groupUrl)
         self.putItems(items)
 

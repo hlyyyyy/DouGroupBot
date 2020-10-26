@@ -132,10 +132,13 @@ def main():
     while True:
         q = slctr.select()  #评论数小于20
         if q.qsize() == 0:
+            #
+            timeToSleep = random.randint(5, 30)
             log.debug("sleep for empty queue: ", timeToSleep)
             time.sleep(timeToSleep)
         else:
-            timeToSleep = 5
+            timeToSleep = random.randint(5, 30)
+            #timeToSleep = 5
         log.info("****selection, q size: ", q.qsize(), "timeToSleep: " + str(timeToSleep) + "****")
         try:
             file = open('resources/record.txt', 'a', encoding='utf-8')
@@ -149,8 +152,9 @@ def main():
                 postCmnt(reqWrapper, postUrl, question, resp)   #评论
 
                 sleepCmnt = random.randint(20, 30)
+                #
+                time.sleep(sleepCmnt)
                 log.debug("sleep cmnt: ", sleepCmnt)
-
 
                 recorder.write(postUrl.split('/')[5] + '\n')
                 record = question + ': ' + resp + '\n'
