@@ -22,7 +22,7 @@ class NewPostSelector:
 
     def getItems(self, url):
         xpExp = "//table[@class='olt']/tr"
-        r = self.s.get(url)
+        r = self.s.get(url, allow_redirects=False)
         items = self.parseHtml(r, xpExp)
         return items
 

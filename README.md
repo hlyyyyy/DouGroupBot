@@ -47,9 +47,14 @@
 ## 大虞海棠专组tips
 
 ### 运行指南
+```
 1. 先在resources/文件夹下创建histo.txt、record.txt两个空文件
 2. 在网页上登录豆瓣账号，F12获取cookies中所需元素（具体见resources/cookies.txt），并将其填入resources/cookies.txt
 3. mySelectors/NewPostSelector.py中39行 if cnt > ? 可以更改筛选条件
+4. 支持账号密码登录，在confidentials/pwd.txt中输入账号密码
+5. 更新功能：先使用账号密码登录，自动获取登录后的cookie，之后每两个半小时重新登录一次，获取新的cookie
+6. 拟更新功能：夜晚休眠时间调整
+```
 
 ### 部署指南
 ```

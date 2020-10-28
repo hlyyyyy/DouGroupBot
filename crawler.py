@@ -3,6 +3,7 @@ from lxml import etree
 import time
 import random
 from queue import SimpleQueue, Empty
+from datetime import datetime
 
 from util import DouUtil
 from actions import RespGen
@@ -28,8 +29,10 @@ def get_headers(fileName=None):
 
 def login(url, pwd, userName, session):
     loginData = {'ck': '', 'name': userName,
-                 'password': pwd, 'remember': 'true'}
+                 'password': pwd, 'remember': 'true', 'ticket': ''}
+
     loginHeaders = get_headers('login_headers.txt')
+    l0 = session.get(url, headers=loginHeaders)
     l = session.post(url, data=loginData, headers=loginHeaders)
 
     if l.status_code == requests.codes['ok'] or l.status_code == requests.codes['found']:
@@ -111,61 +114,79 @@ def main():
     cred = DouUtil.getCred()
     pwd = cred['pwd']#账号密码 需要txt
     userName = cred['userName']
-    loginReqUrl = ''
-
-    # s = requests.Session()
-    reqWrapper = requestsWrapper.ReqWrapper()
-    s = reqWrapper._session
-    s.headers.update({
-        'Host': 'www.douban.com',
-        'Connection': 'keep-alive',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-    })
-    s.cookies.update(DouUtil.loadCookies())#cookies登录 需要txt
-
-    slctr = NewPostSelector.NewPostSelector(q, reqWrapper)#选择需要评论的帖子
-    timeToSleep = 5
-    combo = 0
+    loginReqUrl = 'https://accounts.douban.com/j/mobile/login/basic'
 
     while True:
-        q = slctr.select()  #评论数小于20
-        if q.qsize() == 0:
-            #
-            timeToSleep = random.randint(5, 30)
-            log.debug("sleep for empty queue: ", timeToSleep)
-            time.sleep(timeToSleep)
-        else:
-            timeToSleep = random.randint(5, 30)
-            #timeToSleep = 5
-        log.info("****selection, q size: ", q.qsize(), "timeToSleep: " + str(timeToSleep) + "****")
-        try:
-            file = open('resources/record.txt', 'a', encoding='utf-8')
-            recorder = open('resources/histo.txt', "a", encoding='utf-8')
+        #计时
+        begin_time = datetime.now()
 
-            while q.qsize() > 0:
-                tup = q.get(timeout=3)
-                question, postUrl, dajie = tup[0], tup[1], tup[2]
+        # s = requests.Session()
+        reqWrapper = requestsWrapper.ReqWrapper()
+        s = reqWrapper._session
 
-                resp = respGen.getResp(question, dajie)
-                postCmnt(reqWrapper, postUrl, question, resp)   #评论
+        login(loginReqUrl, pwd, userName, s)
+        DouUtil.flushCookies(s)
 
-                sleepCmnt = random.randint(20, 30)
+        s.headers.update({
+            'Host': 'www.douban.com',
+            'Connection': 'keep-alive',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+        })
+
+
+
+        s.cookies.update(DouUtil.loadCookies())#cookies登录 需要txt
+
+        slctr = NewPostSelector.NewPostSelector(q, reqWrapper)#选择需要评论的帖子
+        timeToSleep = 5
+        combo = 0
+
+        while True:
+            loop_time = datetime.now()
+            time_gap = (loop_time-begin_time).total_seconds()//60   #分钟
+            print("programme running time: " + str(time_gap))
+            if time_gap >= 150:
+                s.close()
+                break
+
+            q = slctr.select()  #评论数小于20
+            if q.qsize() == 0:
                 #
-                time.sleep(sleepCmnt)
-                log.debug("sleep cmnt: ", sleepCmnt)
+                timeToSleep = random.randint(5, 30)
+                log.debug("sleep for empty queue: ", timeToSleep)
+                time.sleep(timeToSleep)
+            else:
+                timeToSleep = random.randint(5, 30)
+                #timeToSleep = 5
+            log.info("****selection, q size: ", q.qsize(), "timeToSleep: " + str(timeToSleep) + "****")
+            try:
+                file = open('resources/record.txt', 'a', encoding='utf-8')
+                recorder = open('resources/histo.txt', "a", encoding='utf-8')
 
-                recorder.write(postUrl.split('/')[5] + '\n')
-                record = question + ': ' + resp + '\n'
-                file.write(record)
+                while q.qsize() > 0:
+                    tup = q.get(timeout=3)
+                    question, postUrl, dajie = tup[0], tup[1], tup[2]
 
-        except Empty:
-            log.info("Emptied q, one round finished")
-        finally:
-            file.close()
-            recorder.close()
-            DouUtil.flushCookies(s)
+                    resp = respGen.getResp(question, dajie)
+                    postCmnt(reqWrapper, postUrl, question, resp)   #评论
+
+                    sleepCmnt = random.randint(20, 30)
+                    #
+                    time.sleep(sleepCmnt)
+                    log.debug("sleep cmnt: ", sleepCmnt)
+
+                    recorder.write(postUrl.split('/')[5] + '\n')
+                    record = question + ': ' + resp + '\n'
+                    file.write(record)
+
+            except Empty:
+                log.info("Emptied q, one round finished")
+            finally:
+                file.close()
+                recorder.close()
+                DouUtil.flushCookies(s)
 
 
 if __name__ == '__main__':
