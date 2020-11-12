@@ -1,7 +1,2 @@
-<<<<<<< HEAD
-userName=19145648726
-pwd=3891935.hly
-=======
 userName=
 pwd=
->>>>>>> b1c8c4426759a3478042b1b9ae4d2bf3e17dfbd5
