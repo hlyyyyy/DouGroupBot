@@ -1,6 +1,7 @@
 from lxml import etree
 import time
 import requests
+import random
 
 from queue import SimpleQueue
 
@@ -14,7 +15,7 @@ class NewPostSelector:
 
     def select(self):
         groupUrl = 'https://www.douban.com/group/704352/'
-        time.sleep(20)
+        time.sleep(random.randint(5, 20))
         items = self.getItems(groupUrl)
         self.putItems(items)
 
@@ -36,7 +37,7 @@ class NewPostSelector:
             try:
                 if tup[1]:
                     href = tup[1].split('/')[5]
-                    if cnt > 2 or href in self.histo:
+                    if cnt > 5 or href in self.histo:
                         continue
                 else:
                     continue

@@ -37,3 +37,21 @@ class ReqWrapper:
                     log.error("Retries end", e)
                     raise e
                 time.sleep(2)
+
+    def close(self, url, **kwargs):
+        retry = 5
+        while True:
+            try:
+                self._session.close()
+                try:
+                    del self._session.cookies
+                except:
+                    pass
+                return True
+            except requests.ConnectionError as e:
+                log.warning('Sessoin post failed, retry:', retry)
+                retry -= 1
+                if retry < 1:
+                    log.error("Retries end", e)
+                    raise e
+                time.sleep(2)

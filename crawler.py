@@ -107,7 +107,6 @@ def postCmnt(session, postUrl, request, response):
         log.info("Success.", request + '  --' + data['rv_comment'])
         '''
 
-
 def main():
     respGen = RespGen.RespGen() #生成回答准备 需要word
     q = SimpleQueue()
@@ -123,9 +122,13 @@ def main():
         # s = requests.Session()
         reqWrapper = requestsWrapper.ReqWrapper()
         s = reqWrapper._session
+        s.cookies.clear()   #清除cookies
 
-        login(loginReqUrl, pwd, userName, s)
-        DouUtil.flushCookies(s)
+        if login(loginReqUrl, pwd, userName, s):
+            DouUtil.flushCookies(s)
+        else:
+            time.sleep(180)
+            break
 
         s.headers.update({
             'Host': 'www.douban.com',
@@ -135,8 +138,6 @@ def main():
             'Accept-Language': 'en-US,en;q=0.5',
         })
 
-
-
         s.cookies.update(DouUtil.loadCookies())#cookies登录 需要txt
 
         slctr = NewPostSelector.NewPostSelector(q, reqWrapper)#选择需要评论的帖子
@@ -145,16 +146,26 @@ def main():
 
         while True:
             loop_time = datetime.now()
+            daytime = datetime(loop_time.year, loop_time.month, loop_time.day, 11, 30)    #白天11.30之前
+            nighttime = datetime(loop_time.year, loop_time.month, loop_time.day, 23, 0)   #晚上23.00之后
             time_gap = (loop_time-begin_time).total_seconds()//60   #分钟
             print("programme running time: " + str(time_gap))
-            if time_gap >= 150:
-                s.close()
-                break
 
-            q = slctr.select()  #评论数小于20
+            if (loop_time - daytime).total_seconds() > 0 and (loop_time - nighttime).total_seconds() < 0:
+                if time_gap >= 180 + random.randint(0, 10):
+                    s.close()
+                    time.sleep(180)
+                    break
+
+            q = slctr.select()  #评论数小于5
             if q.qsize() == 0:
-                #
-                timeToSleep = random.randint(5, 30)
+                print((loop_time - daytime).total_seconds())
+                print((loop_time - nighttime).total_seconds())
+                #w32
+                if (loop_time - daytime).total_seconds() > 0 and (loop_time - nighttime).total_seconds() < 0:
+                    timeToSleep = random.randint(50, 70)
+                else:
+                    timeToSleep = random.randint(600, 900)
                 log.debug("sleep for empty queue: ", timeToSleep)
                 time.sleep(timeToSleep)
             else:
