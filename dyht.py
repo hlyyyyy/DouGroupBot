@@ -8,7 +8,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import cv2
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -28,6 +27,15 @@ class Ui_MainWindow(object):
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
         self.gridLayout.addWidget(self.pushButton, 4, 1, 1, 1)
+
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("宋体")
+        font.setPointSize(10)
+        self.pushButton_3.setFont(font)
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.gridLayout.addWidget(self.pushButton_3, 4, 0, 1, 1)
+
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 7, 0, 1, 1)
@@ -94,6 +102,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.checkBox.setText(_translate("MainWindow", "是否使用cookies登录"))
         self.pushButton.setText(_translate("MainWindow", "开始自动顶贴"))
+        self.pushButton_3.setText(_translate("MainWindow", "停止自动顶贴"))
         self.label_3.setText(_translate("MainWindow", "密码："))
         self.label.setText(_translate("MainWindow", "大虞海棠专组机器人——赵书虞"))
         self.pushButton_2.setText(_translate("MainWindow", "更新"))

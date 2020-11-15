@@ -4,7 +4,7 @@ from lxml import etree
 import requests
 import base64
 import hashlib
-from PIL import Image
+#from PIL import Image
 import re
 
 from util import Logger as myLogger

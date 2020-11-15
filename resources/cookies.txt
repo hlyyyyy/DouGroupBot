@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-bid=MAvOKPINCpk; dbcl2="225598926:C3nSPHXNBHo"; ck=cxXv
-=======
-
->>>>>>> b1c8c4426759a3478042b1b9ae4d2bf3e17dfbd5
+bid=4WVGGyAs2YI; dbcl2="225598926:mK8bmm/rGts"; ck=hcfq

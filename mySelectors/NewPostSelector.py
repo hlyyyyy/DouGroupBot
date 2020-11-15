@@ -1,7 +1,7 @@
 from lxml import etree
 import time
 import requests
-import random
+#import random
 
 from queue import SimpleQueue
 
@@ -15,7 +15,7 @@ class NewPostSelector:
 
     def select(self):
         groupUrl = 'https://www.douban.com/group/704352/'
-        time.sleep(random.randint(5, 20))
+        #time.sleep(random.randint(5, 20))
         items = self.getItems(groupUrl)
         self.putItems(items)
 
