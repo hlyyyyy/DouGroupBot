@@ -1,2 +1,2 @@
-userName=19145648726
-pwd=112496520h
+userName=
+pwd=
