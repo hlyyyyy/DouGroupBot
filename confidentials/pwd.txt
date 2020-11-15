@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 userName=19145648726
 pwd=112496520h
+=======
+userName=
+pwd=
+>>>>>>> b372a2a3eb42b6ecf3ad0f5cce8d9f3f9323f7eb
